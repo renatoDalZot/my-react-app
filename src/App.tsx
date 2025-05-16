@@ -1,25 +1,38 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { AppBar, Toolbar, Typography, Button } from '@mui/material';
+import Navbar from './components/Navibar';
+import Home from './components/Home';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import About from './components/About';
+import Contact from './components/Contact';
+import PostList from './components/Posts/PostList';
+import PostDetail from './components/Posts/PostDetail';
+import NaoDeu from './components/NaoDeu';
+import CreatePost from './components/Posts/CreatePost';
+import EditPost from './components/Posts/EditPost';
+import { UserProvider } from './contexts/UserContext';
+
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <UserProvider>
+    <BrowserRouter>
+    <div>
+      <Navbar />        
+      <Routes> 
+        <Route path="*" element={<NaoDeu />}/>        
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/posts" element={<PostList />} />
+        <Route path="/posts/:id" element={<PostDetail />} />   
+        <Route path="/posts/create" element={<CreatePost />} />  
+        <Route path='/posts/edit/:id' element={<EditPost />} />
+      </Routes>
     </div>
+    </BrowserRouter>
+    </UserProvider>
   );
 }
 
