@@ -11,11 +11,13 @@ import NaoDeu from './components/NaoDeu';
 import CreatePost from './components/Posts/CreatePost';
 import EditPost from './components/Posts/EditPost';
 import { UserProvider } from './contexts/UserContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-
+const queryClient = new QueryClient(); 
 
 function App() {
   return (
+    <QueryClientProvider client={queryClient}> {}    
     <UserProvider>
     <BrowserRouter>
     <div>
@@ -33,6 +35,7 @@ function App() {
     </div>
     </BrowserRouter>
     </UserProvider>
+    </QueryClientProvider>
   );
 }
 
