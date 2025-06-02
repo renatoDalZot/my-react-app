@@ -2,12 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useGetPosts } from "../../../services/usePostsHooks";
-
-interface Post {
-  id: number;
-  title: string;
-  content: string;
-}
+import { Post } from "../../../types/postInterfaces";
 
 function PostList() {
   const { posts, errorStatus, loading } = useGetPosts();
@@ -40,8 +35,10 @@ function PostList() {
           padding: "10px",
         }}
       >
-        {posts.map((post) => (
-          <div key={post.id} onClick={() => navegarParaPost(post.id)}
+        {posts.map((post: Post) => (
+          <div
+            key={post.id}
+            onClick={(): void => navegarParaPost(post.id)}
             style={{
               border: "1px solid #ccc",
               borderRadius: "8px",

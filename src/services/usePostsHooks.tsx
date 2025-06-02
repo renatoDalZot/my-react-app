@@ -1,76 +1,57 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-
-interface Post {
-  userId: string;
-  id: number;
-  title: string;
-  content: string;
-}
+import { useQuery } from '@tanstack/react-query';
+import { dbEntry, Post } from '../types/postInterfaces';
 
 export function useGetPost(id?: string) {
-  const [post, setPost] = useState<Post>();
-  const [errorStatus, setErrorStatus] = useState<number | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!id) return;
-    setLoading(true);
-    axios.get(`http://localhost:3001/posts/${id}`)
-      .then((response) => {
-        const data = response.data;
-        const formattedPost = {
-          userId: data.userId,
-          id: data.id,
-          title: data.title,
-          content: data.body,
-        };
-        setPost(formattedPost);
-        setErrorStatus(null);
-      })
-      .catch((error) => {
-        setPost(undefined);
-        if (error.response?.status === 404) {
-          setErrorStatus(404);
-        } else {
-          setErrorStatus(error.response?.status || 500);
-        }
-      })
-      .finally(() => setLoading(false));
-  }, [id]);
-
-  return { post, errorStatus, loading };
+  const { data, error, isLoading } = useQuery({
+    queryKey: ['post', id],
+    queryFn: async () => {
+      if (!id) throw new Error('Post ID is required');
+      const response = await fetch(`http://localhost:3001/posts/${id}`);
+      if (!response.ok) throw response;
+      const post : dbEntry = await response.json();
+      return {        
+        id: Number(post.id),
+        title: post.title,
+        content: post.body,
+      } as Post;
+    },
+  });
+  return {
+    post: data ?? null,
+    errorStatus: error
+      ? (error instanceof Response
+          ? error.status
+          : 500)
+      : null,
+    loading: isLoading,
+  };
 }
 
 export function useGetPosts() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [errorStatus, setErrorStatus] = useState<number | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data, error, isLoading } = useQuery({
+    queryKey: ['posts'],
+    queryFn: async () => {
+      const response = await fetch('http://localhost:3001/posts');
+      if (!response.ok) throw response;
+      const data = await response.json();
+      return data.map((post: dbEntry) => ({
+        userId: post.userId,
+        id: post.id,
+        title: post.title,
+        content: post.body,
+      })) as Post[];
+    },
+  });
 
-  useEffect(() => {
-    setLoading(true);
-    axios.get('http://localhost:3001/posts')
-      .then((response) => {
-        const data = response.data;
-        const formattedPosts = data.map((post: any) => ({
-          userId: post.userId,
-          id: post.id,
-          title: post.title,
-          content: post.body,
-        }));
-        setPosts(formattedPosts);
-        setErrorStatus(null);
-      })
-      .catch((error) => {
-        setPosts([]);
-        if (error.response?.status === 404) {
-          setErrorStatus(404);
-        } else {
-          setErrorStatus(error.response?.status || 500);
-        }
-      })
-      .finally(() => setLoading(false));
-  }, []);
-
-  return { posts, errorStatus, loading };
+  return {
+    posts: data ?? [],
+    errorStatus: error
+      ? (error instanceof Response
+          ? error.status
+          : 500)
+      : null,
+    loading: isLoading,
+  };
 }

@@ -4,7 +4,7 @@
       "id": "1",
       "userId": 1,
       "title": "ea molestias quasi alteracadoqui ipsa sit aut",
-      "body": "conteúdo!"
+      "body": "conteúdo! alterado com react.query\n"
     },
     {
       "id": "2",
@@ -64,7 +64,13 @@
       "id": "11",
       "userId": 11,
       "title": "NOVO APÓS REFACTOR",
-      "body": "REFACTOR"
+      "body": "REFACTOR react-query funcinando!!"
+    },
+    {
+      "id": "12",
+      "userId": 12,
+      "title": "novo post 02.06.2025",
+      "body": "02.06.2025\n"
     }
   ]
 }
